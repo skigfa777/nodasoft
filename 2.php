@@ -56,21 +56,13 @@ class User
     /**
      * Возвращает пользователя по имени.
      * @param string $name
-     * @return array
+     * @return array || boolean
      */
     public static function user(string $name): array
     {
         $stmt = self::getInstance()->prepare("SELECT id, name, lastName, from, age, settings FROM Users WHERE name = {$name}");
         $stmt->execute();
-        $user_by_name = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return [
-            'id' => $user_by_name['id'],
-            'name' => $user_by_name['name'],
-            'lastName' => $user_by_name['lastName'],
-            'from' => $user_by_name['from'],
-            'age' => $user_by_name['age'],
-        ];
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
