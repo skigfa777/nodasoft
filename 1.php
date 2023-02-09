@@ -42,10 +42,10 @@ class User
 
     /**
      * Добавляет пользователей в базу данных.
-     * @param $users
+     * @param array $users
      * @return array
      */
-    public function add($users): array
+    public function add(array $users): array
     {
         $ids = [];
         \Gateway\User::getInstance()->beginTransaction();
