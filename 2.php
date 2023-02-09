@@ -3,6 +3,7 @@
 namespace Gateway;
 
 use PDO;
+use \Manager\User as Manager;
 
 class User
 {
@@ -56,7 +57,7 @@ class User
         $query = "SELECT `id`, `name`, `lastName`, `from`, `age`, `settings` FROM Users WHERE age > :ageFrom LIMIT :limit";
         $stmt = self::getInstance()->prepare($query);
         $stmt->bindValue(':ageFrom', (int) $ageFrom, self::getInstance()::PARAM_INT);
-        $stmt->bindValue(':limit', (int) \Manager\User::limit, self::getInstance()::PARAM_INT);
+        $stmt->bindValue(':limit', (int) Manager::limit, self::getInstance()::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $users = [];
