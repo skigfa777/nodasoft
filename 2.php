@@ -61,15 +61,8 @@ class User
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $users = [];
         foreach ($rows as $row) {
-            $settings = json_decode($row['settings']);
-            $users[] = [
-                'id' => $row['id'],
-                'name' => $row['name'],
-                'lastName' => $row['lastName'],
-                'from' => $row['from'],
-                'age' => $row['age'],
-                'key' => $settings['key'],
-            ];
+            $settings = json_decode($row['settings'], true);
+            $users[] = $settings;
         }
 
         return $users;
