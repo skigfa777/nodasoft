@@ -51,7 +51,12 @@ class User
      */
     public static function getUsers(int $ageFrom): array
     {
-        $stmt = self::getInstance()->prepare("SELECT id, name, lastName, from, age, settings FROM Users WHERE age > {$ageFrom} LIMIT " . \Manager\User::limit);
+        //1) исправляем то же, что и в прошлые коммиты
+        //2) SQL вынесем в отдельную переменную для удобства
+        $query = "SELECT `id`, `name`, `lastName`, `from`, `age`, `settings` FROM Users WHERE age > :ageFrom LIMIT :limit";
+        $stmt = self::getInstance()->prepare($query);
+        $stmt->bindValue(':ageFrom', (int) $ageFrom, self::getInstance()::PARAM_INT);
+        $stmt->bindValue(':limit', (int) \Manager\User::limit, self::getInstance()::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $users = [];
@@ -78,8 +83,9 @@ class User
     public static function getByName(string $name): array
     {
         //1) исправляем ошибки в SQL-запросе, from - зарезервированное слово, так что оборачиваем в ``:
-        $stmt = self::getInstance()->prepare("SELECT `id`, `name`, `lastName`, `from`, `age`, `settings` FROM Users WHERE name = :name");
-        //2) вот тут точно не вспомню, но суть в том, что перед отправой запроса входные значения надо обезвредить:
+        $query = "SELECT `id`, `name`, `lastName`, `from`, `age`, `settings` FROM Users WHERE name = :name";
+        $stmt = self::getInstance()->prepare($query);
+        //2) вот тут точно не вспомню, но суть в том, что перед отправкой запроса входные значения надо обезвредить:
         $stmt->bindValue(':name', (string) $name, self::getInstance()::PARAM_STR);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -97,7 +103,8 @@ class User
         //1) если раннее PDO был назван, как $stmt, то и в остальных методах он также должен быть назван, как $stmt, а не как вздумается
         //2) далее, также обезвреживаем входные данные перед отправкой запроса, как и в методе getByName()
         //3) в SQL-запросе перепутаны поля, т.е. в поле lastName войдет age, исправим, правильный порядок Имя, Фамилия, Возраст
-        $stmt = self::getInstance()->prepare("INSERT INTO Users (name, lastName, age) VALUES (:name, :lastName, :age)");
+        $query = "INSERT INTO Users (name, lastName, age) VALUES (:name, :lastName, :age)";
+        $stmt = self::getInstance()->prepare($query);
         $stmt->bindValue(':name', (string) $name, self::getInstance()::PARAM_STR);
         $stmt->bindValue(':lastName', (string) $lastName, self::getInstance()::PARAM_STR);
         $stmt->bindValue(':age', (int) $age, self::getInstance()::PARAM_INT);
