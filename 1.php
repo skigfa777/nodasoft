@@ -16,7 +16,6 @@ class User
     function getUsers(int $ageFrom): array
     {
         $ageFrom = (int)trim($ageFrom);
-
         return Gateway::getOlderByAge($ageFrom);
     }
 
@@ -27,16 +26,13 @@ class User
     public static function getByNames(): array
     {
         $users = [];
-
         //$_GET['names'] - так нежелательно, надо отфильтровать
         $names = filter_input(INPUT_GET, 'names', FILTER_SANITIZE_STRING);
-
         if ($names) {
             foreach ($names as $name) {
-                $users[] = Gateway::getByName($name);
+                $users[] = Gateway::getByName($name);//SQL-запрос в цикле, вероятно не всегда хорошо
             }
         }
-
         return $users;
     }
 
@@ -48,6 +44,7 @@ class User
     public function add(array $users): array
     {
         $ids = [];
+        //транзакции, возможно и здесь что-то надо подрихтовать 
         \Gateway\User::getInstance()->beginTransaction();
         foreach ($users as $user) {
             try {
@@ -58,7 +55,6 @@ class User
                 Gateway::getInstance()->rollBack();
             }
         }
-
         return $ids;
     }
 }
