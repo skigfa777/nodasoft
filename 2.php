@@ -54,10 +54,13 @@ class User
     {
         //1) исправляем то же, что и в прошлые коммиты
         //2) SQL вынесем в отдельную переменную для удобства
+
+        $manager = new Manager();//вроде надо создать экземляр класса в случае с Manager
+
         $query = "SELECT `id`, `name`, `lastName`, `from`, `age`, `settings` FROM Users WHERE age > :ageFrom LIMIT :limit";
         $stmt = self::getInstance()->prepare($query);
         $stmt->bindValue(':ageFrom', (int) $ageFrom, self::getInstance()::PARAM_INT);
-        $stmt->bindValue(':limit', (int) Manager::limit, self::getInstance()::PARAM_INT);
+        $stmt->bindValue(':limit', (int) $manager->limit, self::getInstance()::PARAM_INT);//limit не static
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $users = [];
