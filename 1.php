@@ -2,6 +2,8 @@
 
 namespace Manager;
 
+use \Gateway\User as Gateway;
+
 class User
 {
     const limit = 10;
@@ -15,7 +17,7 @@ class User
     {
         $ageFrom = (int)trim($ageFrom);
 
-        return \Gateway\User::getUsers($ageFrom);
+        return Gateway::getOlderByAge($ageFrom);
     }
 
     /**
@@ -26,7 +28,7 @@ class User
     {
         $users = [];
         foreach ($_GET['names'] as $name) {
-            $users[] = \Gateway\User::user($name);
+            $users[] = Gateway::getByName($name);
         }
 
         return $users;
@@ -43,11 +45,11 @@ class User
         \Gateway\User::getInstance()->beginTransaction();
         foreach ($users as $user) {
             try {
-                \Gateway\User::add($user['name'], $user['lastName'], $user['age']);
-                \Gateway\User::getInstance()->commit();
-                $ids[] = \Gateway\User::getInstance()->lastInsertId();
+                Gateway::add($user['name'], $user['lastName'], $user['age']);
+                Gateway::getInstance()->commit();
+                $ids[] = Gateway::getInstance()->lastInsertId();
             } catch (\Exception $e) {
-                \Gateway\User::getInstance()->rollBack();
+                Gateway::getInstance()->rollBack();
             }
         }
 

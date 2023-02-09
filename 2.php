@@ -50,7 +50,7 @@ class User
      * @param int $ageFrom
      * @return array
      */
-    public static function getUsers(int $ageFrom): array
+    public static function getOlderByAge(int $ageFrom): array
     {
         //1) исправляем то же, что и в прошлые коммиты
         //2) SQL вынесем в отдельную переменную для удобства
