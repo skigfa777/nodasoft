@@ -36,7 +36,7 @@ class User
                 $users[] = Gateway::getByName($name);
             }
         }
-        
+
         return $users;
     }
 
@@ -45,7 +45,7 @@ class User
      * @param $users
      * @return array
      */
-    public function users($users): array
+    public function add($users): array
     {
         $ids = [];
         \Gateway\User::getInstance()->beginTransaction();
