@@ -27,10 +27,16 @@ class User
     public static function getByNames(): array
     {
         $users = [];
-        foreach ($_GET['names'] as $name) {
-            $users[] = Gateway::getByName($name);
-        }
 
+        //$_GET['names'] - так нежелательно, надо отфильтровать
+        $names = filter_input(INPUT_GET, 'names', FILTER_SANITIZE_STRING);
+
+        if ($names) {
+            foreach ($names as $name) {
+                $users[] = Gateway::getByName($name);
+            }
+        }
+        
         return $users;
     }
 
