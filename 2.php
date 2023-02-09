@@ -6,6 +6,17 @@ use PDO;
 
 class User
 {
+    //1) хост, порт и кодировка тоже нужны для коннекта с СУБД на всякий случай
+    //2) вынесем отдельно параметры соединения
+    private $cfg = [
+        'host' => '127.0.0.1',
+        'port' => '3306',
+        'dbname' => 'db',
+        'charset' => 'utf8',
+        'user' => 'dbuser',
+        'password' => 'dbpass'
+    ];
+
     /**
      * @var PDO
      */
@@ -18,9 +29,15 @@ class User
     public static function getInstance(): PDO
     {
         if (is_null(self::$instance)) {
-            $dsn = 'mysql:dbname=db;host=127.0.0.1';
-            $user = 'dbuser';
-            $password = 'dbpass';
+            $params = [
+              "mysql:host={$this->cfg['host']}",
+              "port={$this->cfg['port']}",
+              "dbname={$this->cfg['dbname']}",
+              "charset={$this->cfg['charset']}",
+            ]
+            $dsn = implode(';', $params);
+            $user = $this->cfg['user'];
+            $password = $this->cfg['password'];
             self::$instance = new PDO($dsn, $user, $password);
         }
 
